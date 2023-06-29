@@ -1,29 +1,46 @@
 const Product = require("../models/productModel");
+const ErrorHandler = require("../utils/errorHandler");
+const ApiFeatures = require("../utils/apiFeatures");
+const catchAsyncErrors = require("../middleware/catchAsyncErrors");
 
 //Create Product
-exports.createProduct = async (req, res, next) => {
+exports.createProduct = catchAsyncErrors(async (req, res, next) => {
   const product = await Product.create(req.body);
   res.status(200).json({
     success: true,
     product,
   });
-};
+});
 
-exports.getAllProducts = async (req, res, next) => {
-  const products = await Product.find();
+exports.getAllProducts = catchAsyncErrors(async (req, res, next) => {
+  const resultsPerPage = 5;
+  const productCount = await Product.countDocuments();
+  const apiFeature = new ApiFeatures(Product.find(), req.query)
+    .search()
+    .filter()
+    .pagination(resultsPerPage);
+  const products = await apiFeature.query;
   res.status(200).json({
     success: true,
     products,
   });
-};
+});
 
-exports.updateProduct = async (req, res, next) => {
-  let product = Product.findById(req.params.id);
+exports.getProductDetails = catchAsyncErrors(async (req, res, next) => {
+  const product = await Product.findById(req.params.id);
   if (!product) {
-    return res.status(500).send({
-      success: false,
-      message: "The product with the given ID was not found",
-    });
+    return next(new ErrorHandler("Product not found", 404));
+  }
+  res.status(200).json({
+    success: true,
+    product,
+  });
+});
+
+exports.updateProduct = catchAsyncErrors(async (req, res, next) => {
+  let product = await Product.findById(req.params.id);
+  if (!product) {
+    return next(new ErrorHandler("Product not found", 500));
   }
   product = await Product.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
@@ -34,4 +51,16 @@ exports.updateProduct = async (req, res, next) => {
     success: true,
     product,
   });
-};
+});
+
+exports.deleteProduct = catchAsyncErrors(async (req, res, next) => {
+  let product = await Product.findById(req.params.id);
+  if (!product) {
+    return next(new ErrorHandler("Product not found", 500));
+  }
+  await product.deleteOne();
+  res.status(200).json({
+    success: true,
+    message: "Deleted Successfully",
+  });
+});
