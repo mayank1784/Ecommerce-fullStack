@@ -35,7 +35,7 @@ Before you begin, ensure you have the following installed:
 Clone the repository to your local machine using Git:
 
 ```bash
-git clone https://github.com/your-username/ecommerce-backend.git
+git clone https://github.com/mayank1784/Ecommerce-fullStack.git
 ```
 ### Environment Configuration
 
@@ -219,10 +219,250 @@ The Ecommerce Backend provides the following API routes:
 }
 ```
 
+### Request a Password Reset Link
 
+- **URL:** `/api/v1/password/forgot`
+- **Method:** `POST`
+- **Authentication:** Not required
+- **Request Body:** JSON Object
 
+**Request Body**
 
+- **email** (String, required): The email address associated with the user's account.
 
+*Example Request Body:*
+
+```json
+{
+  "email": "johndoe@example.com"
+}
+```
+
+**Response:**
+
+- Success Response (200 OK)
+
+   - **message** (String): "Password reset email sent successfully."
+   - **data** (String): A message confirming that a password reset email has been sent to the provided email address.
+
+*Example Response:*
+
+```json
+{
+  "success": true,
+  "message": "Password reset email sent successfully.",
+  "data": "Password reset email has been sent to johndoe@example.com"
+}
+```
+
+**Error Response:**
+
+- 404 Not Found
+
+   - **message** (String): "User not found with this email address."
+   - **data** (String): A message indicating that no user account was found with the provided email address.
+
+*Example Error Response:*
+
+```json
+{
+  "success": false,
+  "message": "User not found with this email address.",
+  "data": "No user account found with the email address johndoe@example.com"
+}
+```
+
+### Create a New Product (Admin)
+
+- **URL:** `/api/v1/admin/product/new`
+- **Method:** `POST`
+- **Authentication:** Required (Admin Role)
+- **Request Body:** JSON Object
+
+**Request Body**
+
+- **name** (String, required): The name of the product.
+- **description** (String, required): A detailed description of the product.
+- **price** (Number, required): The price of the product.
+- **category** (String, required): The category to which the product belongs.
+- **stock** (Number, required): The available stock quantity of the product.
+- **images** (Array of Objects, required): An array of image objects containing `public_id` and `url`.
+
+*Example Request Body:*
+
+```bash
+{
+  "name": "Example Product",
+  "description": "This is an example product description.",
+  "price": 49.99,
+  "category": "Electronics",
+  "stock": 100,
+  "images": [
+    {
+      "public_id": "image1",
+      "url": "https://example.com/image1.jpg"
+    },
+    {
+      "public_id": "image2",
+      "url": "https://example.com/image2.jpg"
+    }
+  ]
+}
+```
+
+**Response:**
+
+- Success Response (201 Created)
+
+   - **message** (String): "Product created successfully."
+   - **data** (Object): The newly created product's details, including the `_id`, `name`, `description`, `price`, `category`, `stock`, and `images`.
+
+*Example Response:*
+
+```json
+{
+  "success": true,
+  "message": "Product created successfully",
+  "data": {
+    "_id": "5fbb6ea6a12b3456cd2de",
+    "name": "Example Product",
+    "description": "This is an example product description.",
+    "price": 49.99,
+    "category": "Electronics",
+    "stock": 100,
+    "images": [
+      {
+        "public_id": "image1",
+        "url": "https://example.com/image1.jpg"
+      },
+      {
+        "public_id": "image2",
+        "url": "https://example.com/image2.jpg"
+      }
+    ]
+  }
+}
+```
+
+### Place a New Order
+
+- **URL:** `/api/v1/order/new`
+- **Method:** `POST`
+- **Authentication:** Required (User)
+- **Request Body:** JSON Object
+
+**Request Body**
+
+- **shippingInfo** (Object, required): Shipping information.
+   - **address** (String, required): The shipping address.
+   - **city** (String, required): The city for shipping.
+   - **state** (String, required): The state for shipping.
+   - **country** (String, required): The country for shipping.
+   - **pincode** (Number, required): The postal code for shipping.
+   - **phoneNo** (String, required): The contact phone number for shipping.
+- **orderItems** (Array of Objects, required): An array of ordered items.
+   - **name** (String, required): The name of the product.
+   - **price** (Number, required): The price of the product.
+   - **quantity** (Number, required): The quantity of the product.
+   - **image** (String, required): The URL of the product image.
+   - **product** (String, required): The product ID.
+- **paymentInfo** (Object, required): Payment information.
+   - **id** (String, required): The payment ID.
+   - **status** (String, required): The payment status.
+- **paidAt** (Date, required): The date and time of payment.
+- **itemsPrice** (Number, required): The total price of ordered items.
+- **shippingPrice** (Number, required): The shipping price.
+- **totalPrice** (Number, required): The total order price.
+
+*Example Request Body:*
+
+```json
+{
+  "shippingInfo": {
+    "address": "123 Main St",
+    "city": "Cityville",
+    "state": "Stateville",
+    "country": "Countryland",
+    "pincode": 12345,
+    "phoneNo": "123-456-7890"
+  },
+  "orderItems": [
+    {
+      "name": "Example Product 1",
+      "price": 49.99,
+      "quantity": 2,
+      "image": "https://example.com/product1.jpg",
+      "product": "5fbb6ea6a12b3456cd2de"
+    },
+    {
+      "name": "Example Product 2",
+      "price": 29.99,
+      "quantity": 1,
+      "image": "https://example.com/product2.jpg",
+      "product": "5fbb6ea6a12b3456cd2df"
+    }
+  ],
+  "paymentInfo": {
+    "id": "payment123",
+    "status": "paid"
+  },
+  "paidAt": "2023-09-30T10:00:00Z",
+  "itemsPrice": 129.97,
+  "shippingPrice": 10.00,
+  "totalPrice": 139.97
+}
+```
+
+**Response:**
+
+- Success Response (201 Created)
+
+   - **message** (String): "Order placed successfully."
+   - **data** (Object): The newly created order's details, including the `_id`, `shippingInfo`, `orderItems`, `paymentInfo`, `paidAt`, `itemsPrice`, `shippingPrice`, and `totalPrice`.
+
+*Example Response:*
+
+```json
+{
+  "success": true,
+  "message": "Order placed successfully",
+  "data": {
+    "_id": "5fbb6ea6a12b3456cd2df",
+    "shippingInfo": {
+      "address": "123 Main St",
+      "city": "Cityville",
+      "state": "Stateville",
+      "country": "Countryland",
+      "pincode": 12345,
+      "phoneNo": "123-456-7890"
+    },
+    "orderItems": [
+      {
+        "name": "Example Product 1",
+        "price": 49.99,
+        "quantity": 2,
+        "image": "https://example.com/product1.jpg",
+        "product": "5fbb6ea6a12b3456cd2de"
+      },
+      {
+        "name": "Example Product 2",
+        "price": 29.99,
+        "quantity": 1,
+        "image": "https://example.com/product2.jpg",
+        "product": "5fbb6ea6a12b3456cd2df"
+      }
+    ],
+    "paymentInfo": {
+      "id": "payment123",
+      "status": "paid"
+    },
+    "paidAt": "2023-09-30T10:00:00Z",
+    "itemsPrice": 129.97,
+    "shippingPrice": 10.00,
+    "totalPrice": 139.97
+  }
+}
+```
 
 ## Security Measures
 
