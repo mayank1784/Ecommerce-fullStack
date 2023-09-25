@@ -5,6 +5,8 @@ const sendToken = require("../utils/jwtToken");
 const sendEmail = require("../utils/sendEmail");
 const crypto = require("node:crypto");
 const { send } = require("node:process");
+
+
 //Register a User
 
 exports.registerUser = catchAsyncErrors(async (req, res, next) => {
@@ -20,6 +22,7 @@ exports.registerUser = catchAsyncErrors(async (req, res, next) => {
   });
   sendToken(user, 201, res);
 });
+
 
 exports.loginUser = catchAsyncErrors(async (req, res, next) => {
   const { email, password } = req.body;
@@ -194,7 +197,7 @@ exports.updateUserByAdmin = catchAsyncErrors(async (req, res, next) => {
   const newUserData = {
     name: req.body.name,
     email: req.body.email,
-    role: req.body.role
+    role: req.body.role,
   };
   const user = await User.findByIdAndUpdate(req.params.id, newUserData, {
     new: true,
