@@ -15,10 +15,11 @@ Welcome to the documentation for the Ecommerce Backend, a RESTful API built usin
    - [Users](#users)
    - [Products](#products)
    - [Orders](#orders)
-4. [Security Measures](#security-measures)
-5. [Error Handling](#error-handling)
-6. [Technologies Used](#technologies-used)
-7. [Deployed Backend](#deployed-backend)
+4. [POST Routes Format](#POST-Routes-Format)
+5. [Security Measures](#security-measures)
+6. [Error Handling](#error-handling)
+7. [Technologies Used](#technologies-used)
+8. [Deployed Backend](#deployed-backend)
 
 ## Prerequisites
 
@@ -121,6 +122,108 @@ The Ecommerce Backend provides the following API routes:
 - `PUT /api/v1/admin/order/:id` : Update the status of an order (admin role required).
 - `DELETE /api/v1/admin/order/:id` : Delete an order (admin role required).
 
+## POST Routes Format
+
+### Register a New User
+
+- URL: `/api/v1/register`
+- Method: POST
+- Authentication: Not required
+- Request Body: JSON Object
+
+**Request Body**
+- name (String, required): The user's full name.
+- email (String, required): The user's email address.
+- password (String, required): The user's password.
+
+*Example Request Body:*
+
+```bash
+{
+  "name": "John Doe",
+  "email": "johndoe@example.com",
+  "password": "securePassword123"
+}
+```
+
+*Response:*
+
+- Success Response (201 Created)
+
+   - message (String): "User registered successfully."
+   - data (Object):
+      - token (String): A JSON Web Token (JWT) for user authentication.
+      - user (Object): The registered user's details, including the `_id`, `name`, and `email`.
+
+*Example Response:*
+
+```bash
+{
+  "success": true,
+  "message": "User registered successfully",
+  "data": {
+    "token": "eyJhbGciOiJIUzI1NiIsIn...",
+    "user": {
+      "_id": "5fbb6ea6a12b3456cd2de",
+      "name": "John Doe",
+      "email": "johndoe@example.com"
+    }
+  }
+}
+```
+
+### Log In as an Existing User
+
+- URL: `/api/v1/login`
+- Method: POST
+- Authentication: Not required
+- Request Body: JSON Object
+
+**Request Body**
+- email (String, required): The user's registered email address.
+- password (String, required): The user's password.
+
+*Example Request Body:*
+
+```bash
+{
+  "email": "johndoe@example.com",
+  "password": "securePassword123"
+}
+```
+
+*Response:*
+
+- Success Response (200 OK)
+
+   - message (String): "Login successful."
+   - data (Object):
+      - token (String): A JSON Web Token (JWT) for user authentication.
+      - user (Object): The authenticated user's details, including the `_id`, `name`, and `email`.
+
+
+*Example Response*
+
+```bash
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "token": "eyJhbGciOiJIUzI1NiIsIn...",
+    "user": {
+      "_id": "5fbb6ea6a12b3456cd2de",
+      "name": "John Doe",
+      "email": "johndoe@example.com"
+    }
+  }
+}
+```
+
+
+
+
+
+
 ## Security Measures
 
 - User authentication using JWT (JSON Web Tokens).
@@ -154,4 +257,4 @@ To access the API routes when not cloned locally, you can use tools like [Postma
 
 Feel free to explore and use this API for building your e-commerce application. If you have any questions or need further assistance, please don't hesitate to reach out.
 
-Note: This documentation assumes you have basic knowledge of RESTful APIs and how to make HTTP requests.
+**Note**: This documentation assumes you have basic knowledge of RESTful APIs and how to make HTTP requests.
